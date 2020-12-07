@@ -12,7 +12,7 @@ class RSA:
 
     All returned prob distribtuions will be in the shape (m x r) with the referents as the columns and murmurs as the rows
     """
-    def __init__(self, referents, murmurs, lexicon, prior, cost, alpha=1):
+    def __init__(self, referents, murmurs, lexicon, prior, cost, saliency, alpha=1):
         self.referents = referents
         self.murmurs = murmurs
         self.lexicon = lexicon
@@ -20,14 +20,14 @@ class RSA:
         self.cost = cost
         self.alpha = alpha
         # added parameters
-
+        self.saliency = 1/saliency
 
     def literal_listener(self):
         p_lit = np.zeros((self.murmurs.shape[0], self.referents.shape[1]))
         for i in range(self.murmurs.shape[0]):
-            margin = np.dot(self.prior, self.lexicon[i])
-            print('margin:', margin)
-            p_lit[i] = np.divide(np.multiply(self.lexicon[i], self.prior), margin)
+            margin = np.dot(self.prior * self.saliency, self.lexicon[i])
+            print("margin:", margin)
+            p_lit[i] = np.divide(np.multiply(self.lexicon[i], self.prior * self.saliency), margin)
         return p_lit
 
     def pragmatic_speaker(self):
@@ -47,15 +47,16 @@ class RSA:
         p_s = self.pragmatic_speaker()
         p_l = np.zeros((self.murmurs.shape[0], self.referents.shape[1]))
         for i in range(self.murmurs.shape[0]):
-            margin = np.dot(p_s[i].reshape(1, self.referents.shape[1]), self.prior.T)
-            p_l[i] = np.divide(np.multiply(p_s[i], self.prior), margin)
+            margin = np.dot(p_s[i].reshape(1, self.referents.shape[1]), (self.prior.T * self.saliency.T))
+            p_l[i] = np.divide(np.multiply(p_s[i], self.prior*self.saliency), margin)
         return p_l
 
 # referent based
 referents = np.array([['r1', 'r2', 'r3']])
 murmurs = np.transpose(np.array([['hat', '<nonce>']]))
 lexicon = np.array([[0, 1, 1], [0, 0, 1]])
-prior = np.array([[7/16, 7/16, 1/8]])
+prior = np.array([[1/3, 1/3, 1/3]])
+saliency = np.array([[1, 1, 10]])
 # feature based
 # referents = np.array([['r1 null', 'r2 hat', 'r3 hat', 'r3 nonce']])
 # murmurs = np.transpose(np.array([['hat', '<nonce>']]))
@@ -63,7 +64,7 @@ prior = np.array([[7/16, 7/16, 1/8]])
 # prior = np.array([[1/4, 1/4, 1/4, 1/4]])
 cost = np.transpose(np.array([[0, -6]]))
 alpha = 1
-rsa_obj = RSA(referents, murmurs, lexicon, prior, cost, alpha)
+rsa_obj = RSA(referents, murmurs, lexicon, prior, cost, saliency, alpha)
 print("LITERAL LISTENER:\n", rsa_obj.literal_listener())
 print("PRAGMATIC SPEAKER:\n", rsa_obj.pragmatic_speaker())
 print("PRAGMATIC LISTENTER:\n", rsa_obj.pragmatic_listener())
