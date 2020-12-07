@@ -55,7 +55,7 @@ class RSA:
 referents = np.array([['r1', 'r2', 'r3']])
 murmurs = np.transpose(np.array([['hat', '<nonce>']]))
 lexicon = np.array([[0, 1, 1], [0, 0, 1]])
-prior = np.array([[7/16, 7/16, 1/8]])
+prior = np.array([[1/3, 1/3, 1/3]])
 # feature based
 # referents = np.array([['r1 null', 'r2 hat', 'r3 hat', 'r3 nonce']])
 # murmurs = np.transpose(np.array([['hat', '<nonce>']]))

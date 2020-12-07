@@ -62,7 +62,7 @@ saliency = np.array([[1, 1, 10]])
 # murmurs = np.transpose(np.array([['hat', '<nonce>']]))
 # lexicon = np.array([[0, 1, 1, 0], [0, 0, 0, 1]])
 # prior = np.array([[1/4, 1/4, 1/4, 1/4]])
-cost = np.transpose(np.array([[0, -6]]))
+cost = np.transpose(np.array([[0, 0]]))
 alpha = 1
 rsa_obj = RSA(referents, murmurs, lexicon, prior, cost, saliency, alpha)
 print("LITERAL LISTENER:\n", rsa_obj.literal_listener())
